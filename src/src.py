@@ -108,17 +108,17 @@ class ezmonitor(object):
         if time_[i] not in name:
             name[time_[i]] = None
         ax = df.plot(x="time", secondary_y=[
-                     "rss", "rsh"], linewidth=0.3, fontsize=5, mark_right=False)
+                     "rss", "rsh"], linewidth=0.3, fontsize=10, mark_right=False)
         ax.set_title(title)
         ax.set_ylabel('Cpu (n)')
-        ax.legend(loc=2, fontsize=3)
-        ax.right_ax.legend(loc=1, fontsize=3)
+        ax.legend(loc=2, fontsize=8)
+        ax.right_ax.legend(loc=1, fontsize=8)
         ax.set_xlabel('Timeline')
         ax.grid(linestyle="--", alpha=0.3)
         ax.right_ax.set_ylabel('Mem (GB)')
         ax.set_xticks(ticks=[df.time[0], df.time[len(df.time)-1]])
         ax.set_xticklabels(
-            [timeline[0].time(), timeline[len(df.time)-1].time()], rotation=45, fontsize=5)
+            [timeline[0].time(), timeline[len(df.time)-1].time()], rotation=45, fontsize=10)
         y1, y2 = ax.get_ylim()
         if len(name) > 1:
             nm = list(name.keys())
@@ -133,9 +133,9 @@ class ezmonitor(object):
         ax2.set_xlim(ax.get_xlim())
         ax2.set_xticks(ticks=list(name.keys()))
         ax2.set_xticklabels(list(name.values())[
-                            :-1] + [""], rotation=45, fontsize=5)
+                            :-1] + [""], rotation=45, fontsize=10)
         plt.tick_params(top=False, which="minor", length=1)
-        plt.subplots_adjust(left=0.1, right=0.85, top=0.9, bottom=0.25)
+        plt.subplots_adjust(left=0.1, right=1.5, top=1.4, bottom=0.25)
         plt.savefig(outfile, format="pdf", bbox_inches='tight')
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(20, 20))
         plt.show()

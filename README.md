@@ -4,11 +4,15 @@
 
 ezmonitor is a easy program for monitoring MEM and CPU Usage of some process and its chriden process.
 
+
+
 ## Software Requirements
 
 + Linux
 
 + Python >=2.7.10, <3.10  and  Python3 for recommend
+
+
 
 ## Installation
 
@@ -28,6 +32,8 @@ or install from anaconda repo:
 ```
 conda install -c yodeng ezmonitor
 ```
+
+
 
 ## User Guide and Usage
 
@@ -85,7 +91,7 @@ output：
 + pid.pdf
 
 
-## Todo
 
-More functions will be improved in the future.
+## Demo
 
+![demo](https://user-images.githubusercontent.com/18365846/163108252-0ffdd202-e989-4dfc-b8dc-b74a9a14f70d.svg)
