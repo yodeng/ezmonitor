@@ -12,11 +12,12 @@ import subprocess
 
 from .src import *
 from .utils import *
+from .version import __version__
 
 
 def main():
     if len(sys.argv) == 1 or "-h" in sys.argv or "--help" in sys.argv:
-        sys.exit(__doc__.strip())
+        sys.exit(__doc__.strip()+"\nversion: %s" % __version__)
     h = ParseSingal()
     h.start()
     wd = os.getcwd()
