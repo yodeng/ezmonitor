@@ -4,6 +4,7 @@ import os
 import time
 import psutil
 import datetime
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -33,7 +34,7 @@ class ezmonitor(object):
             def inner_wrapper(*args, **kwargs):
                 if float(tick) > 0:
                     t = Thread(target=cls._record,
-                               args=(os.getpid(), tick, False))
+                               args=(os.getpid(), tick, None, False))
                     t.setDaemon(True)
                     t.start()
                 return func(*args, **kwargs)
@@ -44,7 +45,9 @@ class ezmonitor(object):
     def _record(pid=os.getpid(), ivs=1, logfile=None, verbose=False):
         ps = psutil.Process(pid)
         log = log_wrapper(logfile=logfile, name="em1")
-        log2 = log_wrapper(name="em2")
+        log.info("#TIME\tRSS(GB)\tSHR(GB)\tCPU(n)\tPNAME")
+        if verbose:
+            log2 = log_wrapper(name="em2")
         while True:
             info = []
             pmem = {}
@@ -60,8 +63,8 @@ class ezmonitor(object):
                     m = p.memory_info()
                     rss += m.rss
                     rsh += m.shared
-                    if m.rss >> 20 > 50:  ## only record rss more then 50MB
-                        pmem[p.name()] = (m.rss, " ".join(p.cmdline()))
+                    # if m.rss >> 20 > 50:  # only record rss more then 50MB
+                    pmem[p.name()] = (m.rss, " ".join(p.cmdline()))
                 except:
                     continue
             try:
@@ -69,8 +72,8 @@ class ezmonitor(object):
                 m = ps.memory_info()
                 rss += m.rss
                 rsh += m.shared
-                if m.rss >> 20 > 50:  ## only record rss more then 50MB
-                    pmem[ps.name()] = (m.rss, " ".join(ps.cmdline()))
+                # if m.rss >> 20 > 50:  # only record rss more then 50MB
+                pmem[ps.name()] = (m.rss, " ".join(ps.cmdline()))
             except:
                 pass
             time_ = datetime.datetime.today().strftime("%F %X")
@@ -80,7 +83,7 @@ class ezmonitor(object):
                 pgm = getProgm(cmd)
                 if pgm:
                     name = pgm
-                info = [time_, Gsize(rss), Gsize(rsh), round(cpu/100, 1), name]
+                info = [time_, Gsize(rss), Gsize(rsh), round(cpu/100, 3), name]
                 log.info("\t".join(map(str, info)))
                 if verbose:
                     log2.info("\t".join(map(str, info)))
@@ -92,8 +95,12 @@ class ezmonitor(object):
         t.start()
 
     def plot(self, outfile=None, title="Monitor Resource"):
-        df = pd.read_csv(self.logfile, header=None, sep="\t", names=[
+        df = pd.read_csv(self.logfile, header=0, sep="\t", names=[
                          "time", "rss", "rsh", "cpu", "name"], index_col=False)
+        group = df.groupby(["time"])
+        df = group.agg({"rss": np.mean, "rsh": np.mean,
+                       "cpu": np.mean, "name": lambda x: x.mode()[0]})
+        df["time"] = df.index
         # df["time"] = pd.to_datetime(df['time']).map(lambda x:x.time())
         df["time"] = pd.to_datetime(df['time'])
         timeline = df["time"]
@@ -109,7 +116,7 @@ class ezmonitor(object):
                 name[time_[i]] = n
             cn_ = n
         if time_[i] not in name:
-            name[time_[i]] = None
+            name[time_[i]] = ""
         ax = df.plot(x="time", secondary_y=[
                      "rss", "rsh"], linewidth=0.3, fontsize=10, mark_right=False)
         ax.set_title(title)
@@ -123,20 +130,23 @@ class ezmonitor(object):
         ax.set_xticklabels(
             [timeline[0].time(), timeline[len(df.time)-1].time()], rotation=45, fontsize=10)
         y1, y2 = ax.get_ylim()
-        if len(name) > 1:
+        y1_, y2_ = ax.right_ax.get_ylim()
+        print(y1, y2, y1_, y2_)
+        y1 = min(y1, y1_)
+        y2 = max(y2, y2_)
+        if len(name) > 2:
             nm = list(name.keys())
             for n, i in enumerate(nm[:-1]):
                 if n % 2:
                     plt.fill_between([nm[n], nm[n+1]], y1, y2,
-                                     facecolor='gray', alpha=0.4)
+                                     facecolor='gray', alpha=0.3)
                 else:
                     plt.fill_between([nm[n], nm[n+1]], y1, y2,
-                                     facecolor='gray', alpha=0.2)
+                                     facecolor='gray', alpha=0.1)
         ax2 = ax.twiny()
         ax2.set_xlim(ax.get_xlim())
         ax2.set_xticks(ticks=list(name.keys()))
-        ax2.set_xticklabels(list(name.values())[
-                            :-1] + [""], rotation=45, fontsize=10)
+        ax2.set_xticklabels(list(name.values()), rotation=45, fontsize=10)
         plt.tick_params(top=False, which="minor", length=1)
         plt.subplots_adjust(left=0.1, right=1.5, top=1.4, bottom=0.25)
         plt.savefig(outfile, format="pdf", bbox_inches='tight')

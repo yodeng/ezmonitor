@@ -1,6 +1,8 @@
+{% set data = load_setup_py_data() %}
+
 package:
     name: ezmonitor
-    version: 1.0.0
+    version: {{ data.get('version') }}
 
 
 build:

@@ -59,7 +59,7 @@ def getProgm(cmd):
         for i in args[1:]:
             if i.endswith(".jar"):
                 return os.path.basename(i)
-    elif args[0].endswith("python") or args[0].endswith("perl") or args[0].endswith("Rscript"):
+    elif os.path.basename(args[0]) in ["python", "python2", "python3"] or args[0].endswith("perl") or args[0].endswith("Rscript"):
         for i in args[1:]:
             if not i.startswith("-"):
                 return os.path.basename(i)

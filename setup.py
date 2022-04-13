@@ -1,8 +1,4 @@
 import os
-import sys
-import site
-import sysconfig
-import subprocess
 
 from setuptools import setup
 from src.version import __version__
@@ -23,7 +19,7 @@ setup(
     package_dir={"ezmonitor": "src"},
     author_email="yodeng@tju.edu.cn",
     url="https://github.com/yodeng/ezmonitor",
-    install_requires=["matplotlib", "psutil", "pandas"],
+    install_requires=["matplotlib", "psutil", "pandas", "numpy"],
     python_requires='>=2.7.10, <3.10',
     long_description=getdes(),
     long_description_content_type='text/markdown',
