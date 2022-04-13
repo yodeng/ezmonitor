@@ -1,0 +1,28 @@
+package:
+    name: ezmonitor
+    version: 1.0.0
+
+
+build:
+    number: 0
+    string: py39
+
+source:
+    path: ..
+
+requirements:
+    host:
+        - python
+        - pip
+        - matplotlib >=3.5.0
+        - psutil >=5.7.0
+        - pandas >=1.3.0
+    run: 
+        - python
+        - matplotlib >=3.5.0
+        - psutil >=5.7.0
+        - pandas >=1.3.0
+
+about:
+    home: https://github.com/yodeng/ezmonitor
+    license: BSD
