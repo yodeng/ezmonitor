@@ -16,6 +16,7 @@ ezmonitor is a easy program for monitoring MEM and CPU Usage of some process and
 
 ## Installation
 
+install from git repo:
 ```
 git clone https://github.com/yodeng/ezmonitor.git
 pip install ./ezmonitor
