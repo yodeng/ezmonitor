@@ -49,3 +49,17 @@ def log_wrapper(logfile=None, level="info", name=None):
 
 def Gsize(size):
     return round(size/1024.0/1024/1024, 3)
+
+
+def getProgm(cmd):
+    args = cmd.split()
+    if len(args) < 2:
+        return
+    if args[0].endswith("java"):
+        for i in args[1:]:
+            if i.endswith(".jar"):
+                return os.path.basename(i)
+    elif args[0].endswith("python") or args[0].endswith("perl") or args[0].endswith("Rscript"):
+        for i in args[1:]:
+            if not i.startswith("-"):
+                return os.path.basename(i)

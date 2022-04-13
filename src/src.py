@@ -15,7 +15,7 @@ from .utils import *
 
 class ezmonitor(object):
 
-    cpu_tick = 0.2
+    cpu_tick = 0.3
 
     def __init__(self, ivs=None, pid=os.getpid(), logfile=None, verbose=False):
         if ivs:
@@ -60,8 +60,8 @@ class ezmonitor(object):
                     m = p.memory_info()
                     rss += m.rss
                     rsh += m.shared
-                    # if m.rss >> 20 > 50:  ## only record rss more then 50MB
-                    pmem[p.name()] = (m.rss, " ".join(p.cmdline()))
+                    if m.rss >> 20 > 50:  ## only record rss more then 50MB
+                        pmem[p.name()] = (m.rss, " ".join(p.cmdline()))
                 except:
                     continue
             try:
@@ -69,14 +69,17 @@ class ezmonitor(object):
                 m = ps.memory_info()
                 rss += m.rss
                 rsh += m.shared
-                # if m.rss >> 20 > 50:  ## only record rss more then 50MB
-                pmem[ps.name()] = (m.rss, " ".join(ps.cmdline()))
+                if m.rss >> 20 > 50:  ## only record rss more then 50MB
+                    pmem[ps.name()] = (m.rss, " ".join(ps.cmdline()))
             except:
                 pass
             time_ = datetime.datetime.today().strftime("%F %X")
             if len(pmem):
                 name, mc = sorted(pmem.items(), key=lambda x: x[1])[-1]
                 cmd = mc[1]
+                pgm = getProgm(cmd)
+                if pgm:
+                    name = pgm
                 info = [time_, Gsize(rss), Gsize(rsh), round(cpu/100, 1), name]
                 log.info("\t".join(map(str, info)))
                 if verbose:
