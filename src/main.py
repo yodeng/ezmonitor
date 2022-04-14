@@ -4,6 +4,7 @@
     1. ezmntor [pid]
     2. ezmntor [processName]
     3. ezmntor [your command line]
+    4. @ezmonitor.wrapper() for decorator
 '''
 
 import sys
@@ -16,7 +17,7 @@ from .version import __version__
 
 
 def main():
-    if len(sys.argv) == 1 or "-h" in sys.argv or "--help" in sys.argv:
+    if len(sys.argv) == 1 or sys.argv[1].startswith("-"):
         sys.exit(__doc__.strip()+"\nversion: %s" % __version__)
     h = ParseSingal()
     h.start()

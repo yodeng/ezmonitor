@@ -4,10 +4,10 @@ package:
     name: ezmonitor
     version: {{ data.get('version') }}
 
-
 build:
     number: 0
     string: py39
+    script: python setup.py install --single-version-externally-managed --record=record.txt
 
 source:
     path: ..
@@ -20,7 +20,6 @@ requirements:
         - psutil >=5.7.0
         - pandas >=1.3.0
     run: 
-        - python
         - matplotlib >=3.5.0
         - psutil >=5.7.0
         - pandas >=1.3.0
