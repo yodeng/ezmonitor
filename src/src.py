@@ -82,11 +82,15 @@ class ezmonitor(object):
                 cmd = mc[1]
                 pgm = getProgm(cmd)
                 if pgm:
+                    if pgm == os.path.basename(sys.argv[0]):
+                        time.sleep(0.2)
+                        continue
                     name = pgm
                 info = [time_, Gsize(rss), Gsize(rsh), round(cpu/100, 3), name]
                 log.info("\t".join(map(str, info)))
                 if verbose:
-                    log2.info("\t".join(map(str, info)))
+                    log2.info("%s(GB), %s(GB) %s(cpu) %s",
+                              info[1], info[2], info[3], name)
 
     def run(self):
         t = Thread(target=self._record, args=(
@@ -131,7 +135,6 @@ class ezmonitor(object):
             [timeline[0].time(), timeline[len(df.time)-1].time()], rotation=45, fontsize=10)
         y1, y2 = ax.get_ylim()
         y1_, y2_ = ax.right_ax.get_ylim()
-        print(y1, y2, y1_, y2_)
         y1 = min(y1, y1_)
         y2 = max(y2, y2_)
         if len(name) > 2:

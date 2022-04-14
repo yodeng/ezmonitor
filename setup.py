@@ -1,7 +1,6 @@
 import os
 
 from setuptools import setup
-from src.version import __version__
 
 
 def getdes():
@@ -12,9 +11,17 @@ def getdes():
     return des
 
 
+def get_version():
+    v = {}
+    with open("src/version.py") as fi:
+        c = fi.read()
+    exec(compile(c, "src/version.py", "exec"), v)
+    return v["__version__"]
+
+
 setup(
     name="ezmonitor",
-    version=__version__,
+    version=get_version(),
     packages=["ezmonitor"],
     package_dir={"ezmonitor": "src"},
     author_email="yodeng@tju.edu.cn",
